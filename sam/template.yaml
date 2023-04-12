@@ -1,0 +1,34 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  Sample SAM Template for aws-lambda-for-the-containers-developer-blog
+
+Parameters:
+  GitHubUsername:
+    Type: String
+  GitHubToken:
+    Type: String
+
+Resources:
+  HugoFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Timeout: 60
+      MemorySize: 1024
+      PackageType: Image
+      Architectures:
+        - x86_64
+      Policies:
+      - arn:aws:iam::aws:policy/AmazonS3FullAccess
+      Environment:
+        Variables:
+          AWS_LAMBDA_FOR_THE_CONTAINERS_DEVELOPER_BLOG_BUCKET: !Ref HugoBucket
+          AWS_LAMBDA_FOR_THE_CONTAINERS_DEVELOPER_BLOG_GITHUB_USERNAME: !Ref GitHubUsername
+          AWS_LAMBDA_FOR_THE_CONTAINERS_DEVELOPER_BLOG_GITHUB_TOKEN: !Ref GitHubToken
+    Metadata:
+      Dockerfile: Dockerfile
+      DockerContext: ../
+      DockerTag: aws-lambda-for-the-containers-developer-blog-v1
+
+  HugoBucket:
+    Type: AWS::S3::Bucket
