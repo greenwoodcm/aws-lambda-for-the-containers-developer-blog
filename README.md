@@ -1,28 +1,44 @@
 ### Introduction
 
-This repository is a companion of the "AWS Lambda for the containers developer" blog post. 
+This repository is a companion of the ["AWS Lambda for the containers developer" blog post](LINK TO THE BLOG). For proper context, please read the blog post before deploying the prototype below.
 
-It includes all the files required to test the workflow promoted in the blog post. In addition to having the bash scripts (`startup.sh` and `businesscode.sh`) as well as the `Dockerfile`, the repository also includes a small and basic Hugo website for test purposes (in the [](./hugo_web_site) folder). 
+This repository includes all the files required to test the workflow promoted in the blog post. In addition to having the bash scripts (`startup.sh` and `businesscode.sh`), the `Dockerfile` as well as the SAM template, the repository also includes a small and basic Hugo website for test purposes (in the [](./hugo_web_site) folder). 
 
-### Setup 
+### Environment setup and prerequisites
 
 To set up the environment please do the following: 
 
-1. create a new repository in your own GitHub account from this template repository
-1. clone your repository in preferred IDE of your choosing
-1. open the `businesscode.sh` file and locate the `aws s3 cp ./public/ s3://<bucket-name>/ --recursive` line 
-1. replace `<bucket-name>` with your own bucket (the bucket should ideally be open for read public access and should have `Static website hosting` enabled)
-(GREENWD: note that the above is moot because i put the bucket in the sam template)
+1. Install the SAM CLI following [these instructions](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/install-sam-cli.html)
+1. Fork the repository in your own GitHub account
+1. Clone your repository in the IDE of your choosing
 
-### Deployment
+> Your IDE must have Docker installed and should have proper AWS credentials configured
 
-To deploy our Lambda function we will use the `SAM CLI`. 
+### Prototype deployment
 
-1. Install the SAM CLI following [these instructions](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/install-sam-cli.html).
+To deploy our stack we will use the `SAM CLI`. Perform the following steps once you are in the local folder of the cloned repository:
+
 1. `cd sam`
 1. `sam build`
-1. `sam deploy --profile <my_aws_profile> --guided`
-  1. This will prompt you for a SAM stack name and region to deploy to
-  1. This will prompt you for the GitHub username and token your function will use to `git clone` the hugo repository
-  1. This will prompt you to let SAM create a managed ECR repository to host the built container artifacts.  Unless you would like to provide the ECR repository yourself, accept this.
-  1. This will also prompt you to leave these settings in a `samconfig.toml` file so that you don't have to go through the guided deployment each time.
+1. `sam deploy [ --profile <my_aws_profile> ] --guided`
+  1. This will prompt you for some information (accept the defaults unless otherwise noticed here below):
+     1. Provide a SAM stack name and region to deploy to
+     1. Provide the GitHub username where you forked the repository (your function will use this to `git clone` the repo) 
+     1. Let SAM create a managed ECR repository to host the built container artifacts (unless you would like to provide the ECR repository yourself, accept this)
+     1. Respond `y` to the question `HugoFunction may not have authorization defined, Is this okay?`
+
+At the end of the workflow a new CloudFormation stack should have been deployed. This includes the Lambda function, the S3 bucket and all required resources.
+
+### Put the prototype at work
+
+Follow the content of the blog post to experiment with the prototype. Note first how the bucket at the beginning is empty. You can solicit the Lambda by testing it or by opening the browser pointing to the API Gateway end-point configured. This will cause the container to go through the `startup.sh` and `businesscode.sh` scripts as described in details in the blog post. 
+
+You can then navigate to the S3 bucket and open its web hosting endpoint (check out `Properties` -> `Static website hosting`). 
+
+Optionally you can tweak the `title` in the `hugo_web_site/config.toml` file and regenerate the site by re-soliciting the Lambda function (remember to commit the changes back to your fork because the Lambda container will clone it at every event)
+
+### Clean Up
+
+To clean up this deployment run `sam delete` and answer `y` to all the questions.
+
+> Note the bucket that has been created by the `sam deploy` needs to be deleted manually because it has the `DeletionPolicy` set to `Retain` 
