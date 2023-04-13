@@ -6,8 +6,6 @@ Description: >
 Parameters:
   GitHubUsername:
     Type: String
-  GitHubToken:
-    Type: String
 
 Resources:
   HugoFunction:
@@ -30,7 +28,6 @@ Resources:
         Variables:
           AWS_LAMBDA_FOR_THE_CONTAINERS_DEVELOPER_BLOG_BUCKET: !Ref HugoBucket
           AWS_LAMBDA_FOR_THE_CONTAINERS_DEVELOPER_BLOG_GITHUB_USERNAME: !Ref GitHubUsername
-          AWS_LAMBDA_FOR_THE_CONTAINERS_DEVELOPER_BLOG_GITHUB_TOKEN: !Ref GitHubToken
     Metadata:
       Dockerfile: Dockerfile
       DockerContext: ../
@@ -60,11 +57,7 @@ Resources:
           - Action:
               - 's3:GetObject'
             Effect: Allow
-            Resource: !Join
-              - ''
-              - - 'arn:aws:s3:::'
-                - !Ref HugoBucket
-                - /*
+            Resource: !Sub 'arn:aws:s3:::${HugoBucket}/*'
             Principal: '*'
             
   
