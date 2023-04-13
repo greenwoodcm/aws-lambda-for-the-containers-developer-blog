@@ -24,10 +24,10 @@ To deploy our stack we will use the `SAM CLI`. Perform the following steps once 
   1. This will prompt you for some information (accept the defaults unless otherwise noticed here below):
      1. Provide a SAM stack name and region to deploy to
      1. Provide the GitHub username where you forked the repository (your function will use this to `git clone` the repo) 
-     1. Let SAM create a managed ECR repository to host the built container artifacts (unless you would like to provide the ECR repository yourself, accept this)
+     1. Let SAM create a managed Amazon ECR repository to host the built container artifacts (unless you would like to provide the ECR repository yourself, accept this)
      1. Respond `y` to the question `HugoFunction may not have authorization defined, Is this okay?`
 
-At the end of the workflow a new CloudFormation stack should have been deployed. This includes the Lambda function, the S3 bucket and all required resources.
+At the end of the workflow a new CloudFormation stack should have been deployed. This includes the Lambda function, the Amazon S3 bucket and all required resources.
 
 ### Put the prototype at work
 
