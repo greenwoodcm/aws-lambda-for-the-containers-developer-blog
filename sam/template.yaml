@@ -18,6 +18,12 @@ Resources:
       PackageType: Image
       Architectures:
         - x86_64
+      Events:
+        ApiGw:
+          Type: Api
+          Properties:
+            Path: /
+            Method: get
       Policies:
       - arn:aws:iam::aws:policy/AmazonS3FullAccess
       Environment:
@@ -32,3 +38,33 @@ Resources:
 
   HugoBucket:
     Type: AWS::S3::Bucket
+    DeletionPolicy: Retain
+    Properties:
+      AccessControl: PublicRead
+      WebsiteConfiguration:
+        IndexDocument: index.html
+        ErrorDocument: error.html
+      PublicAccessBlockConfiguration:  
+        BlockPublicAcls: False
+        BlockPublicPolicy: False
+        IgnorePublicAcls: False
+        RestrictPublicBuckets: False
+  
+  HugoBucketPolicy: 
+    Type: AWS::S3::BucketPolicy
+    Properties: 
+      Bucket: !Ref HugoBucket
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Action:
+              - 's3:GetObject'
+            Effect: Allow
+            Resource: !Join
+              - ''
+              - - 'arn:aws:s3:::'
+                - !Ref HugoBucket
+                - /*
+            Principal: '*'
+            
+  
