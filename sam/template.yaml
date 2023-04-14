@@ -22,6 +22,10 @@ Resources:
           Properties:
             Path: /
             Method: get
+        Sqs:
+          Type: SQS
+          Properties:
+            Queue: !GetAtt Queue.Arn
       Policies:
       - arn:aws:iam::aws:policy/AmazonS3FullAccess
       Environment:
@@ -30,7 +34,7 @@ Resources:
           AWS_LAMBDA_FOR_THE_CONTAINERS_DEVELOPER_BLOG_GITHUB_USERNAME: !Ref GitHubUsername
     Metadata:
       Dockerfile: Dockerfile
-      DockerContext: ../
+      DockerContext: ../src
       DockerTag: aws-lambda-for-the-containers-developer-blog-v1
 
   HugoBucket:
@@ -59,5 +63,14 @@ Resources:
             Effect: Allow
             Resource: !Sub 'arn:aws:s3:::${HugoBucket}/*'
             Principal: '*'
+
+  Queue: 
+    Type: AWS::SQS::Queue
+    Properties:
+      VisibilityTimeout: 120
             
-  
+Outputs:
+  ApiGatewayUrl:
+    Value: !Sub 'https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/'
+  QueueUrl:
+    Value: !Ref Queue
