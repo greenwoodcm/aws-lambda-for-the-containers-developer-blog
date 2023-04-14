@@ -21,17 +21,22 @@ To deploy our stack we will use the `SAM CLI`. Perform the following steps once 
 1. `cd sam`
 1. `sam build`
 1. `sam deploy [ --profile <my_aws_profile> ] --guided`
-  1. This will prompt you for some information (accept the defaults unless otherwise noticed here below):
-     1. Provide a SAM stack name and region to deploy to
-     1. Provide the GitHub username where you forked the repository (your function will use this to `git clone` the repo) 
-     1. Respond `y` to the question `HugoFunction may not have authorization defined, Is this okay?`
-     1. Let SAM create a managed Amazon ECR repository to host the built container artifacts (unless you would like to provide the ECR repository yourself, accept this)
+    1. This will prompt you for some information (accept the defaults unless otherwise noticed here below):
+        1. Provide a SAM stack name and region to deploy to
+        1. Provide the GitHub username where you forked the repository (your function will use this to `git clone` the repo) 
+        1. Respond `y` to the question `HugoFunction may not have authorization defined, Is this okay?`
+        1. Let SAM create a managed Amazon ECR repository to host the built container artifacts (unless you would like to provide the ECR repository yourself, accept this)
 
 At the end of the workflow a new CloudFormation stack should have been deployed. This includes the Lambda function, the S3 bucket and all required resources.
 
 ### Put the prototype at work
 
-Follow the content of the blog post to experiment with the prototype. Note first how the bucket at the beginning is empty. You can solicit the Lambda by testing it or by opening the browser pointing to the API Gateway end-point configured. This will cause the container to go through the `startup.sh` and `businesscode.sh` scripts as described in details in the blog post. 
+Follow the content of the blog post to experiment with the prototype. Note first how the bucket at the beginning is empty. You can trigger execution of the application in a few different ways:
+1. Make an asynchronous event-based call by putting a message in the SQS queue
+    1. Run the [](./scripts/call-via-sqs.sh) script.  Pass in your stack name as the first parameter.  This script respects environment variables for AWS CLI context like region and profile name.
+1. Make an HTTP request via API Gateway
+    1. Run the [](./scripts/call-via-api-gateway.sh) script.  Pass in your stack name as the first parameter.  This script respects environment variables for AWS CLI context like region and profile name.  It also uses [awscurl](https://github.com/okigan/awscurl) to provide AWS credentials on the HTTP call to API Gateway, so install it before running this script.
+    1. Alternatively, you can navigate to the API Gateway console and open the URL for the `Prod` endpoint of the API Gateway created by our SAM template.
 
 You can then navigate to the S3 bucket and open its web hosting endpoint (check out `Properties` -> `Static website hosting`). 
 
