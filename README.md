@@ -2,7 +2,7 @@
 
 This repository is a companion of the ["AWS Lambda for the containers developer" blog post](LINK TO THE BLOG). For proper context, please read the blog post before deploying the prototype below.
 
-This repository includes all the files required to test the workflow promoted in the blog post. In addition to having the bash scripts (`startup.sh` and `businesscode.sh`), the `Dockerfile` as well as the SAM template, the repository also includes a small and basic Hugo website for test purposes (in the [](./hugo_web_site) folder). 
+This repository includes all the files required to test the workflow promoted in the blog post. In addition to having the bash scripts (`startup.sh` and `businesscode.sh`), the `Dockerfile` as well as the SAM template, the repository also includes a small and basic Hugo website for test purposes (in the [](./src/hugo_web_site) folder). 
 
 ### Environment setup and prerequisites
 
@@ -35,7 +35,7 @@ Follow the content of the blog post to experiment with the prototype. Note first
 
 You can then navigate to the S3 bucket and open its web hosting endpoint (check out `Properties` -> `Static website hosting`). 
 
-Optionally you can tweak the `title` in the `hugo_web_site/config.toml` file and regenerate the site by re-soliciting the Lambda function (remember to commit the changes back to your fork because the Lambda container will clone it at every event)
+Optionally you can tweak the `title` in the `src/hugo_web_site/config.toml` file and regenerate the site by re-soliciting the Lambda function (remember to commit the changes back to your fork because the Lambda container will clone it at every event)
 
 ### Clean Up
 
